@@ -37,46 +37,87 @@ syntax Expr
   ;
   
 syntax BoolExpr
-  = Id \ "true" \ "false"
-  | Bool
-  > "(" BoolExpr ")"
-  > "!" BoolExpr
+  //= Id \ "true" \ "false"
+  //| Bool
+  //> "(" BoolExpr ")"
+  = "!" BoolExpr
   > left IntExpr "\>=" IntExpr
   | left IntExpr "\<=" IntExpr
   | left IntExpr "\>" IntExpr
   | left IntExpr "\<" IntExpr
-  > left BoolExpr "==" BoolExpr 
-  | left BoolExpr "!=" BoolExpr
+  | BoolTerm OptionalBoolExpr?
+  //> left BoolExpr "==" BoolExpr 
+ // | left BoolExpr "!=" BoolExpr
   | left IntExpr "==" IntExpr
   | left IntExpr "!=" IntExpr
-  > left BoolExpr "&&" BoolExpr
-  | left BoolExpr "||" BoolExpr
+  | left StrExpr "==" StrExpr
+  | left StrExpr "!=" StrExpr
+  //> left BoolExpr "&&" BoolExpr
+  //| left BoolExpr "||" BoolExpr
+  ;
+  
+syntax OptionalBoolExpr
+  = "!=" BoolExpr
+  | "==" BoolExpr
+  ;
+  
+syntax BoolTerm
+  = BoolFactor OptionalBoolTerm?;
+  
+syntax OptionalBoolTerm
+  = "&&" BoolTerm
+  | "||" Boolterm
+  ;
+  
+syntax BoolFactor
+  =  Id \ "true" \ "false"
+  | Bool
+  | "(" BoolExpr ")"
   ;
   
 syntax IntExpr
-  = Id \ "true" \ "false"
+  //= Id \ "true" \ "false"
+  //| Int
+  //> "(" IntExpr ")"
+  //> "+" IntExpr
+  = Term OptionalIntExpr?
+  //> left IntExpr "*" IntExpr
+  //| left IntExpr "/" IntExpr
+ // > left IntExpr "+" IntExpr
+  //| left IntExpr "-" IntExpr
+ // > left IntExpr "\>=" IntExpr
+ // | right IntExpr "\<=" IntExpr
+ // | left IntExpr "\>" IntExpr
+ // | right IntExpr "\<" IntExpr
+ // > left IntExpr "==" IntExpr
+ // | right IntExpr "!=" IntExpr
+  ;
+  
+syntax OptionalIntExpr
+  = "+" IntExpr
+  | "-" IntExpr
+  ;
+  
+syntax Term
+  = Factor OptionalTerm? ;
+  
+syntax OptionalTerm
+  = "*" Term
+  | "/" Term
+  ;
+  
+syntax Factor
+  = "(" IntExpr ")"
   | Int
-  > "(" IntExpr ")"
-  > "+" IntExpr
-  > left IntExpr "*" IntExpr
-  | left IntExpr "/" IntExpr
-  > left IntExpr "+" IntExpr
-  | left IntExpr "-" IntExpr
-  > left IntExpr "\>=" IntExpr
-  | left IntExpr "\<=" IntExpr
-  | left IntExpr "\>" IntExpr
-  | left IntExpr "\<" IntExpr
-  > left IntExpr "==" IntExpr
-  | left IntExpr "!=" IntExpr
+  | Id \ "true" \ "false"  
   ;
   
 syntax StrExpr
   = Id \"true" \"false"
   | Str
   > "(" StrExpr ")"
-  | left StrExpr "==" StrExpr
-  | left StrExpr "!=" StrExpr
-  | 
+ // | left StrExpr "==" StrExpr
+ // | left StrExpr "!=" StrExpr
   ;
   
 syntax Type
