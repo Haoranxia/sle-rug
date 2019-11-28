@@ -22,6 +22,12 @@ AForm cst2ast(start[Form] sf) {
 }
 
 AQuestion cst2ast(Question q) {
+  switch (q) {
+    case (Question)`<StringText> <Id name> : <typeName>`: 
+      return question("<string text>", "<Id name>", "<type name>", "");
+    case (Question` <string text> <Id name> : <type name> = <expression>`:
+      return question("<string text>", "<Id name>", "<type name>", "<expression>");
+  }
   throw "Not yet implemented";
 }
 

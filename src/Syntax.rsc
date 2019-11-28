@@ -1,5 +1,10 @@
 module Syntax
 
+import ParseTree;
+import vis::ParseTree;
+import vis::Render;
+import vis::Figure;
+
 extend lang::std::Layout;
 extend lang::std::Id;
 
@@ -12,113 +17,30 @@ start syntax Form
 
 // TODO: question, computed question, block, if-then-else, if-then
 syntax Question
-  = Str Id ":" TypeDefinition // Question and computed question
-  | "if" BoolExpr "{" Question* "}" OptionalElse?
+  = Str Id ":" Type ("=" Expr)? // Question and computed question
+  | "if" Expr "{" Question* "}" ("else" "{" Question* "}")?
   ; 
-
-syntax OptionalElse
-  = "else" "{" Question* "}"
-  ;
-  
-syntax TypeDefinition
-  = "integer" ("= " IntExpr)?
-  | "boolean" ("= " BoolExpr)?
-  | "string" ("= " StrExpr)?
-  ;
 
 // TODO: +, -, *, /, &&, ||, !, >, <, <=, >=, ==, !=, literals (bool, int, str)
 // Think about disambiguation using priorities and associativity
 // and use C/Java style precedence rules (look it up on the internet)
-syntax Expr 
-  = Id \ "true" \ "false" // true/false are reserved keywords.
-  | BoolExpr 
-  | IntExpr
-  | StrExpr
-  ;
-  
-syntax BoolExpr
-  //= Id \ "true" \ "false"
-  //| Bool
-  //> "(" BoolExpr ")"
-  = "!" BoolExpr
-  > left IntExpr "\>=" IntExpr
-  | left IntExpr "\<=" IntExpr
-  | left IntExpr "\>" IntExpr
-  | left IntExpr "\<" IntExpr
-  | BoolTerm OptionalBoolExpr?
-  //> left BoolExpr "==" BoolExpr 
- // | left BoolExpr "!=" BoolExpr
-  | left IntExpr "==" IntExpr
-  | left IntExpr "!=" IntExpr
-  | left StrExpr "==" StrExpr
-  | left StrExpr "!=" StrExpr
-  //> left BoolExpr "&&" BoolExpr
-  //| left BoolExpr "||" BoolExpr
-  ;
-  
-syntax OptionalBoolExpr
-  = "!=" BoolExpr
-  | "==" BoolExpr
-  ;
-  
-syntax BoolTerm
-  = BoolFactor OptionalBoolTerm?;
-  
-syntax OptionalBoolTerm
-  = "&&" BoolTerm
-  | "||" Boolterm
-  ;
-  
-syntax BoolFactor
-  =  Id \ "true" \ "false"
-  | Bool
-  | "(" BoolExpr ")"
-  ;
-  
-syntax IntExpr
-  //= Id \ "true" \ "false"
-  //| Int
-  //> "(" IntExpr ")"
-  //> "+" IntExpr
-  = Term OptionalIntExpr?
-  //> left IntExpr "*" IntExpr
-  //| left IntExpr "/" IntExpr
- // > left IntExpr "+" IntExpr
-  //| left IntExpr "-" IntExpr
- // > left IntExpr "\>=" IntExpr
- // | right IntExpr "\<=" IntExpr
- // | left IntExpr "\>" IntExpr
- // | right IntExpr "\<" IntExpr
- // > left IntExpr "==" IntExpr
- // | right IntExpr "!=" IntExpr
-  ;
-  
-syntax OptionalIntExpr
-  = "+" IntExpr
-  | "-" IntExpr
-  ;
-  
-syntax Term
-  = Factor OptionalTerm? ;
-  
-syntax OptionalTerm
-  = "*" Term
-  | "/" Term
-  ;
-  
-syntax Factor
-  = "(" IntExpr ")"
+syntax Expr
+  = Id \ "true" \"false" // true/false are reserved keywords.
   | Int
-  | Id \ "true" \ "false"  
-  ;
-  
-syntax StrExpr
-  = Id \"true" \"false"
+  | Bool
   | Str
-  > "(" StrExpr ")"
- // | left StrExpr "==" StrExpr
- // | left StrExpr "!=" StrExpr
+  | "(" Expr ")"
+  | "!" Expr
+  | "+" Expr
+  |  "-" Expr
+  > left (Expr "*" Expr | Expr "/" Expr)
+  > left (Expr "+" Expr | Expr "-" Expr)
+  > non-assoc (Expr "\<" Expr | Expr "\<=" Expr | Expr "\>=" Expr | Expr "\>" Expr)
+  > left (Expr "==" Expr | Expr "!=" Expr)
+  > left Expr "&&" Expr
+  > left Expr "||" Expr
   ;
+
   
 syntax Type
   = "boolean"
