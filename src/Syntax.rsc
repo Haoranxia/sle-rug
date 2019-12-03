@@ -32,7 +32,7 @@ syntax Expr
   | "(" Expr ")"
   | "!" Expr
   | "+" Expr
-  |  "-" Expr
+  | "-" Expr
   > left (Expr "*" Expr | Expr "/" Expr)
   > left (Expr "+" Expr | Expr "-" Expr)
   > non-assoc (Expr "\<" Expr | Expr "\<=" Expr | Expr "\>=" Expr | Expr "\>" Expr)
