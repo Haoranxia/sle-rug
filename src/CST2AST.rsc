@@ -23,24 +23,42 @@ AForm cst2ast(start[Form] sf) {
 
 AQuestion cst2ast(Question q) {
   switch (q) {
-    case (Question)`<StringText> <Id name> : <typeName>`: 
-      return question("<string text>", "<Id name>", "<type name>", "");
-    case (Question` <string text> <Id name> : <type name> = <expression>`:
-      return question("<string text>", "<Id name>", "<type name>", "<expression>");
+  	case (Question) `<Str q> <Id i> ":" <Type t>`:
+  	 	return question(q, id("<i>", src=i@\loc), cst2ast(t), src=q@\loc);
+  		
+  	case (Question) `<Str q> <Id i> ":" <Type t> "=" <Expr e>`:
+  		return question(q, id("<i>", src=i@\loc), cst2ast(t), cst2ast(e), src=q@\loc);
+  		
+  	case (Question) `"if" <Expr ifexpr> "{" <Question* qif> "}" "else" "{" <Question* qelse> "}"`:
+  		return question(cst2ast(ifexpr), cst2ast(qif), cst2ast(qelse));
   }
-  throw "Not yet implemented";
 }
 
 AExpr cst2ast(Expr e) {
   switch (e) {
-    case (Expr)`<Id x>`: return ref("<x>", src=x@\loc);
+    case (Expr) `<Id x>`: return ref("<x>", src=x@\loc);
+    case (Expr) `<Int x>`: return integer("<x>", src=x@\loc);
+    case (Expr) `<Bool x>`: return boolean("<x>", src=x@\loc);
+    case (Expr) `<Str x>`: return string("<x>", src=x@\loc);
+    case (Expr) `"(" <Expr e> ")"`: return bracketExpr(cst2ast(e), src=e@\loc);
+    case (Expr) `"!" <Expr e>`: return not(cst2ast(e), src=e@\loc);
+    case (Expr) `"+" <Expr e>`: return unaryPlus(cst2ast(e), src=e@\loc);
+    case (Expr) `"-" <Expr e>`: return unaryMinus(cst2ast(e), src=e@\loc);
+    
     
     // etc.
-    
-    default: throw "Unhandled expression: <e>";
   }
 }
 
 AType cst2ast(Type t) {
-  throw "Not yet implemented";
+  switch(t){
+  	case (Type) `"string"`:
+  		return stringType();
+  		
+  	case (Type) `"integer"`:
+  		return integerType();
+  		
+  	case (Type) `"boolean"`:
+  		return booleanType();
+  }
 }
