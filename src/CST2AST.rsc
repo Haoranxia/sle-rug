@@ -4,7 +4,8 @@ import Syntax;
 import AST;
 
 import ParseTree;
-//import String;
+import String;
+import Boolean;
 import IO;
 
 /*
@@ -19,46 +20,36 @@ import IO;
 
 AForm cst2ast(start[Form] sf) {
   Form f = sf.top; // remove layout before and after form
-  println("Works so far.");
-  //return cst2ast(f);
   
   switch(f) {
-    case (Form) `form <Id formTitle> "{" <Question* qs> "}"`: {
-        println("This line was successfully recognised.");
-        return form("<formTitle>", [cst2ast(q) | Question q <- qs], src=f@\loc); 
+    case (Form) `form <Id formTitle> { <Question* qs> }`: {
+        return form(id("<formTitle>", src=formTitle@\loc), [cst2ast(q) | Question q <- qs]);
       }
+    default: throw "Not a form.";
   }
-  
-  return form("", [], src=f@\loc);
 }
-
-
-AForm cst2ast((Form) `form <Id formTitle> { <Question* qs> }`) {
-    println("Started second Form function.");
-    return form("<formTitle>", [cst2ast(q) | Question q <- qs ]);
-  }
 
 AQuestion cst2ast(Question q) {
   switch (q) {
-  	case (Question) `<Str q> <Id i> : <Type t>`:
-  	 	return question(q, id("<i>", src=i@\loc), cst2ast(t), src=q@\loc);
+  	case (Question) `<Str quest> <Id i> : <Type t>`:
+  	 	return question("<quest>", id("<i>", src=i@\loc), cst2ast(t), src=q@\loc);
   		
-  	case (Question) `<Str q> <Id i> : <Type t> = <Expr e>`:
-  		return question(q, id("<i>", src=i@\loc), cst2ast(t), cst2ast(e), src=q@\loc);
+  	case (Question) `<Str quest> <Id i> : <Type t> = <Expr e>`:
+  		return question("<quest>", id("<i>", src=i@\loc), cst2ast(t), cst2ast(e), src=q@\loc);
   		
   	case (Question) `if <Expr ifexpr> { <Question* qifs> }`:
-  	    return question(cst2ast(ifexpr), [ cst2ast(qif) | Question qif <- qifs ]);
+  	    return question(cst2ast(ifexpr), [ cst2ast(qif) | Question qif <- qifs ], src=q@\loc);
   	    
   	case (Question) `if <Expr ifexpr> { <Question* qifs> } else { <Question* qelses> }`:
-  		return question(cst2ast(ifexpr), [ cst2ast(qif) | Question qif <- qifs ], [ cst2ast(qelse) | Question qelse <- qelses ]);
+  		return question(cst2ast(ifexpr), [ cst2ast(qif) | Question qif <- qifs ], [ cst2ast(qelse) | Question qelse <- qelses ], src=q@\loc);
   }
 }
 
 AExpr cst2ast(Expr e) {
   switch (e) {
-    case (Expr) `<Id x>`: return ref("<x>", src=x@\loc);
-    case (Expr) `<Int x>`: return integer("<x>", src=x@\loc);
-    case (Expr) `<Bool x>`: return boolean("<x>", src=x@\loc);
+    case (Expr) `<Id x>`: return ref(id("<x>", src=x@\loc));
+    case (Expr) `<Int x>`: return integer(toInt("<x>"), src=x@\loc);
+    case (Expr) `<Bool x>`: return boolean(fromString("<x>"), src=x@\loc);
     case (Expr) `<Str x>`: return string("<x>", src=x@\loc);
     case (Expr) `( <Expr e> )`: return bracketExpr(cst2ast(e), src=e@\loc);
     case (Expr) `! <Expr e>`: return not(cst2ast(e), src=e@\loc);

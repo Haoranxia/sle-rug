@@ -16,6 +16,7 @@ data AForm(loc src = |tmp:///|)
 data AQuestion(loc src = |tmp:///|)
   = question(str queryText, AId id, AType varType)
   | question(str queryText, AId id, AType varType, AExpr expr)
+  | question(AExpr guard, list[AQuestion] ifQuestions)
   | question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions)
   ; 
 
