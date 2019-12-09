@@ -3,6 +3,8 @@ module Check
 import AST;
 import Resolve;
 import Message; // see standard library
+import IO;
+import Set;
 
 data Type
   = tint()
@@ -17,6 +19,7 @@ alias TEnv = rel[loc def, str name, str label, Type \type];
 // To avoid recursively traversing the form, use the `visit` construct
 // or deep match (e.g., `for (/question(...) := f) {...}` ) 
 TEnv collect(AForm f) {
+  // Append the sets of possible types over the two constructs (so 2*3 = 6 separate sets) into a single rel 
   return {<x.src, x.name, label, tint()> | /question(str label, AId x, integerType()) := f} +
          {<x.src, x.name, label, tint()> | /question(str label, AId x, integerType(), _) := f} +
          {<x.src, x.name, label, tbool()> | /question(str label, AId x, booleanType()) := f} + 
@@ -26,14 +29,42 @@ TEnv collect(AForm f) {
 }
 
 set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
-  return {}; 
+  println("starting the check function.");
+  set[Message] msgs = {};
+  switch(f) {
+    case form(_, list[AQuestion] qs):
+        msgs += union({check(q, tenv, useDef) | q <- qs});
+  }
+  println("Final msgs set:");
+  println(msgs);
+  return msgs; 
 }
 
 // - produce an error if there are declared questions with the same name but different types.
 // - duplicate labels should trigger a warning 
 // - the declared type computed questions should match the type of the expression.
 set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
-  return {}; 
+  set[Message] msgs = {};
+  
+  switch (q) {
+    case question(str queryText, AId id, AType varType): {
+      msgs += createIncompTypeErrors(id, tenv, useDef);
+      msgs += createDupLabelWarnings(queryText, id, tenv, useDef);
+    }
+  }
+  
+  return msgs; 
+}
+
+set[Message] createIncompTypeErrors(AId id, TEnv tenv, UseDef useDef) {
+  TEnv q = { elem | elem <- tenv, elem.def == id.src };
+  set[loc] mismatchLocs = { mismatch.def | mismatch <- tenv, mismatch.name == getOneFrom(q).name, mismatch.\type != getOneFrom(q).\type};
+  return { error("Variable type declaration conflicts with previous declaration.", mismatch) | mismatch <- mismatchLocs };
+}
+
+set[Message] createDupLabelWarnings(str queryText, AId id, TEnv tenv, UseDef useDef) {
+  
+  return {};
 }
 
 // Check operand compatibility with operators.
