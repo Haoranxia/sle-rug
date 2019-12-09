@@ -34,9 +34,10 @@ set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
   switch(f) {
     case form(_, list[AQuestion] qs):
         msgs += union({check(q, tenv, useDef) | q <- qs});
+    default: throw "Not a form.";    
   }
-  println("Final msgs set:");
-  println(msgs);
+  //println("Final msgs set:");
+  //println(msgs);
   return msgs; 
 }
 
@@ -50,6 +51,7 @@ set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
     case question(str queryText, AId id, AType varType): {
       msgs += createIncompTypeErrors(id, tenv, useDef);
       msgs += createDupLabelWarnings(queryText, id, tenv, useDef);
+      msgs += createMultipleLabelsWarnings(id, tenv, useDef);
     }
   }
   
@@ -63,8 +65,17 @@ set[Message] createIncompTypeErrors(AId id, TEnv tenv, UseDef useDef) {
 }
 
 set[Message] createDupLabelWarnings(str queryText, AId id, TEnv tenv, UseDef useDef) {
+  TEnv q = {elem | elem <- tenv, elem.label == queryText};
+  set[loc]DupLabelLocs = {dup.def | dup <- tenv, dup.label == getOneFrom(q).label, dup.name != getOneFrom(q).name};
+  return { warning("Same label associated with multiple questions.", duplicate) | duplicate <- DupLabelLocs };
+}
+
+set[Message] createMultipleLabelsWarnings(AId id, TEnv tenv, UseDef useDef) {
+  TEnv q = { elem | elem <- tenv, elem.name == id.name };
+  println(q);
+  set[loc] multLabelLocs = { mismatch.def | mismatch <- tenv, mismatch.name == getOneFrom(q).name, mismatch.label != getOneFrom(q).label};
   
-  return {};
+  return { warning("Multiple labels associated with the same question.", duplicate) | duplicate <- multLabelLocs };
 }
 
 // Check operand compatibility with operators.
