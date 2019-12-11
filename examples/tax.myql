@@ -20,7 +20,7 @@ form taxOfficeExample {
     hasMaintLoan: boolean
     
   "Did you sell a house in 2010?"
-   hasSoldHouse: boolean
+   hasSoldHouse: integer
    
    if (hasSoldHouse) {
     "What was the selling price?"

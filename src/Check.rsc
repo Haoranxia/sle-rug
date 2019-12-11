@@ -59,12 +59,18 @@ set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
         msgs += { error("Type of expression does not match type of variable.", expr.src) };
       }
     }
-    case question(AExpr guard, list[AQuestion] ifqs): {
+    case question(AExpr guard, list[AQuestion] ifqs, src = loc u): {
       msgs += check(guard, tenv, useDef);
+      if (typeOf(guard, tenv, useDef) != tbool()) {
+        msgs += { error("Guard of if statement is not boolean.", u) };
+      }
       msgs += union({check(ifq, tenv, useDef) | (AQuestion) ifq <- ifqs});
     }
     case question (AExpr guard, list[AQuestion] ifqs, list[AQuestion] elseqs): {
       msgs += check(guard, tenv, useDef);
+      if (typeOf(guard, tenv, useDef) != tbool()) {
+        msgs += { error("Guard of if statement is not boolean.", u) };
+      }
       msgs += union({check(ifq, tenv, useDef) | ifq <- ifqs});
       msgs += union({check(elseq, tenv, useDef) | elseq <- elseqs});
     }
