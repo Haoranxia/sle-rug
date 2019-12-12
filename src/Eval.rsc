@@ -97,18 +97,21 @@ VEnv eval(AQuestion q, Input inp, VEnv venv) {
     
     case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
       //println("Testing case 4");
+      print("guard: ");
+      println(guard);
+      println(eval(guard, venv) == vbool(true));
       if (eval(guard, venv) == vbool(true)) {
         for (ifq <- ifQuestions) {
           venv = eval(ifq, inp, venv);
         }
       }
-      if (eval(guard, venv) == vbool(false)) {
+      else if (eval(guard, venv) == vbool(false)) {
         for (elseq <- elseQuestions) {
           venv = eval(elseq, inp, venv);
         }
       }
       else {
-        assert("Guard is not a boolean expression.");
+        throw("Guard is not a boolean expression.");
       }
     }
     default: assert("wrongly formatted question.");
@@ -130,17 +133,30 @@ Value eval(AExpr e, VEnv venv) {
     }// return eval(expr, venv);
     case unaryPlus(AExpr expr): return eval(expr, venv);
     case unaryMinus(AExpr expr): {
-      Value vint(int x) = eval(expr, venv);
-      return vint(-x);
+      int val;
+      switch(eval(left, venv)) {
+        case vint(int x): val = x;
+      }
+      return vint(-val);
     }    
     case mult(AExpr left, AExpr right): {
-      Value vint(int l) = eval(left, venv);
-      Value vint(int r) = eval(right, venv);
+      int l, r;
+      switch(eval(left, venv)) {
+        case vint(int x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vint(int x): r = x;
+      }
       return vint(l*r);
     }
     case div(AExpr left, AExpr right): {
-      Value vint(int l) = eval(left, venv);
-      Value vint(int r) = eval(right, venv);
+      int l, r;
+      switch(eval(left, venv)) {
+        case vint(int x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vint(int x): r = x;
+      }
       return vint(l/r);
     }
     case plus(AExpr left, AExpr right): {
@@ -151,8 +167,6 @@ Value eval(AExpr e, VEnv venv) {
       switch (eval(right, venv)) {
         case vint(int x): r = x;
       }
-      //Value vint(int l) = eval(left, venv);
-      //Value vint(int r) = eval(right, venv);
       return vint(l+r);
     }
     case minus(AExpr left, AExpr right): {
@@ -164,28 +178,46 @@ Value eval(AExpr e, VEnv venv) {
       switch (eval(right, venv)) {
         case vint(int x): r = x;
       }
-      //Value vint(int l) = eval(left, venv);
-      //Value vint(int r) = eval(right, venv);
       return vint(l-r);
     }
     case less(AExpr left, AExpr right): {
-      Value vint(int l) = eval(left, venv);
-      Value vint(int r) = eval(right, venv);
+      int l, r;
+      switch(eval(left, venv)) {
+        case vint(int x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vint(int x): r = x;
+      }
       return vbool(l < r);
     }
     case leq(AExpr left, AExpr right): {
-      Value vint(int l) = eval(left, venv);
-      Value vint(int r) = eval(right, venv);
+      int l, r;
+      switch(eval(left, venv)) {
+        case vint(int x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vint(int x): r = x;
+      }
       return vbool(l <= r);
     }
     case greater(AExpr left, AExpr right): {
-      Value vint(int l) = eval(left, venv);
-      Value vint(int r) = eval(right, venv);
+      int l, r;
+      switch(eval(left, venv)) {
+        case vint(int x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vint(int x): r = x;
+      }
       return vbool(l > r);
     }
     case geq(AExpr left, AExpr right): {
-      Value vint(int l) = eval(left, venv);
-      Value vint(int r) = eval(right, venv);
+      int l, r;
+      switch(eval(left, venv)) {
+        case vint(int x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vint(int x): r = x;
+      }
       return vbool(l >= r);
     }
     case eq(AExpr left, AExpr right): {
@@ -235,13 +267,23 @@ Value eval(AExpr e, VEnv venv) {
       }
     }
     case and(AExpr left, AExpr right): {
-      Value vbool(bool l) = eval(left, venv);
-      Value vbool(bool r) = eval(right, venv);
+      bool l, r;
+      switch(eval(left, venv)) {
+        case vbool(bool x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vbool(bool x): r = x;
+      }
       return vbool(l && r);
     }
     case or(AExpr left, AExpr right): {
-      Value vbool(bool l) = eval(left, venv);
-      Value vbool(bool r) = eval(right, venv);
+      bool l, r;
+      switch(eval(left, venv)) {
+        case vbool(bool x): l = x;
+      }
+      switch (eval(right, venv)) {
+        case vbool(bool x): r = x;
+      }
       return vbool(l || r);
     }
     
