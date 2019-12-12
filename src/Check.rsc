@@ -194,8 +194,8 @@ set[Message] check(AExpr e, TEnv tenv, UseDef useDef) {
       if (typeLeft != typeOf(rightArg, tenv, useDef)) {
         msgs += { error("Argument types of expression do not match.", leftArg.src) };
       }
-      else if (typeLeft != tint()) {
-        msgs += { error("Arguments are not of type int.", leftArg.src) };
+      else if (typeLeft != tint() && typeLeft != tbool()) {
+        msgs += { error("Arguments are not of type int or bool.", leftArg.src) };
       }
     }
     
@@ -204,8 +204,8 @@ set[Message] check(AExpr e, TEnv tenv, UseDef useDef) {
       if (typeLeft != typeOf(rightArg, tenv, useDef)) {
         msgs += { error("Argument types of expression do not match.", leftArg.src) };
       }
-      else if (typeLeft != tint()) {
-        msgs += { error("Arguments are not of type int.", leftArg.src) };
+      else if (typeLeft != tint() && typeLeft != tbool()) {
+        msgs += { error("Arguments are not of type int or bool.", leftArg.src) };
       }
     }
     
