@@ -1,0 +1,10 @@
+TO-DO list for code generation:
+
+- Question Generation: This is the easy part. We need to create a JSON object with the fields 'label', 'name', 'type', and 'value', and get the correct corresponding value from the abstract syntax tree. The JavScript object is saved as a var in JavaScript, and from there we can change its fields and save the changing values.
+
+- If Statement Support: For each if statement, a number of things need to be done:
+	*) make it so that the variables in the guard (if it contains one or more variables) are listened to by the function that controls the presentation of the if part.
+	*) implement the displaying and hiding of the questions in the if statement, and optionally show the else statement instead. This function is easy: just update the style element "display:none" to "display:block" or vice versa.
+	*) The questions are put in place in advance, so there is no need to reconstruct the questions: they are already there, just hidden from view.
+
+- Computed Question Generation: This works the same as the normal question generation, except for one part: we need to generate the computation, and create event listeners for the function that computes this computed value, and that listens to the variables defined in the expression for the computed question. In Rascal, we will need to scan the expression in order to get the used variables (this seems like an application of refgraph() function, since they list the defining occurrence associated with use occurrences, and using that, we should be able to get the variables in use quite easily). Then, we add a JavaScript line that adds an eventListener listening to those variables, and that activates the correct function for the current expression. Additionally, we need to translate the expression as given into an expression line that can be interpreted by JavaScript. Special care needs to be taken so that the balance of the expression is not disturbed (i.e., we need to put brackets around subexpressions).
