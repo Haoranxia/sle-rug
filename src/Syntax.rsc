@@ -17,8 +17,10 @@ start syntax Form
 
 // TODO: question, computed question, block, if-then-else, if-then
 syntax Question
-  = Str Id ":" Type ("=" Expr)? // Question and computed question
-  | "if" Expr "{" Question* "}" ("else" "{" Question* "}")?
+  = Str Id ":" Type
+  | Str Id ":" Type "=" Expr
+  | "if" Expr "{" Question* "}"
+  | "if" Expr "{" Question* "}" "else" "{" Question* "}"
   ; 
 
 // TODO: +, -, *, /, &&, ||, !, >, <, <=, >=, ==, !=, literals (bool, int, str)
@@ -32,7 +34,7 @@ syntax Expr
   | "(" Expr ")"
   | "!" Expr
   | "+" Expr
-  |  "-" Expr
+  | "-" Expr
   > left (Expr "*" Expr | Expr "/" Expr)
   > left (Expr "+" Expr | Expr "-" Expr)
   > non-assoc (Expr "\<" Expr | Expr "\<=" Expr | Expr "\>=" Expr | Expr "\>" Expr)
