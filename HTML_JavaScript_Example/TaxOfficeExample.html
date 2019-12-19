@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="TaxOfficeExample.js"></script>
+	</head>
+	
+	<body>
+		<h1 id="title">
+		  TaxOfficeExample
+		</h1>
+		
+		<p>Did you buy a house in 2010?</p>
+		<input type="checkbox" id="hasBoughtHouse"></input>
+		
+		<p>Did you enter a loan?</p>
+		<input type="checkbox" id="hasMaintLoan"></input>
+		
+		<p>Did you sell a house in 2010?</p>
+		<input type="checkbox" id="hasSoldHouse"></input>
+		
+		<div id="ifHasBoughtHouse", style="display:none">
+		  <p>What was the selling price?</p>
+		  <input type="number" id="sellingPrice"></input>
+		  
+		  <p>Private debts for the sold house:</p>
+		  <input type="number" id="privateDebt"></input>
+		  
+		  <p>Value residue:</p>
+		  <p id="valueResidue"></p>
+		</div>
+		
+		
+	</body>
+</html>
