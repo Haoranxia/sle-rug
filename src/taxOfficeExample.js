@@ -23,6 +23,7 @@ function updatevalueResidue() {
     
     var privateDebt = document.getElementById("privateDebt");
     
-    valueResidue.innerHTML = sellingPrice - privateDebt;
+    valueResidue.value = sellingPrice.value - privateDebt.value;
+    valueResidue.innerHTML = valueResidue.value;
 }
 
