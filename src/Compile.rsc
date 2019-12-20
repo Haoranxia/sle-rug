@@ -19,7 +19,7 @@ import util::Math;
  * - if needed, use the name analysis to link uses to definitions
  */
 
-//[extension=js]
+
 void compile(AForm f) {
   loc saveLocJS = |project://QL/src| + (f.name.name + ".js");
   writeFile(saveLocJS, form2js(f));
@@ -137,7 +137,8 @@ str processComputedQuestion(AId id, AExpr expr, RefGraph variables) {
           '    <for (str name <- names) {>
           '    var <name> = document.getElementById(\"<name>\");
           '    <}>
-          '    " + id.name + ".innerHTML = " + expr2js(expr) + ";
+          '    " + id.name + ".value = " + expr2js(expr) + ";
+          '    " + id.name + ".innerHTML = " + id.name + ".value;
           '}
           '
           '";
@@ -149,7 +150,7 @@ str expr2js(AExpr expr) {
   str code = "";
   
   switch (expr) {
-    case ref(AId id): code += id.name;
+    case ref(AId id): code += (id.name + ".value");
     case integer(int intValue): code += toString(intValue);
     case boolean(bool boolValue): code += toString(boolValue);
     case string(str strValue): code += strValue;
