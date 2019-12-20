@@ -84,6 +84,19 @@ str addQuestionEventListener(AQuestion q, RefGraph variables) {
           code += addQuestionEventListener(ifq, variables);
         }
       }
+      case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
+        visit(guard) {
+          case ref(AId id): 
+            code += "
+                    '    document.getElementById(\"" + id.name + "\").addEventListener(\"change\", check" + id.name + ");";
+        }
+        for (AQuestion ifq <- ifQuestions) {
+          code += addQuestionEventListener(ifq, variables);
+        }
+        for (AQuestion elseq <- elseQuestions) {
+          code += addQuestionEventListener(elseq, variables);
+        }
+      }
     }
     
     return code;
@@ -97,6 +110,8 @@ str question2js(AQuestion q, RefGraph variables) {
       questionCode += processComputedQuestion(id, expr, variables);
     case question(AExpr guard, list[AQuestion] ifQuestions): 
       questionCode += processIfStatement(guard, ifQuestions, variables);
+    case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions):
+      questionCode += processIfElseStatement(guard, ifQuestions, elseQuestions, variables);
   }
   
   return questionCode;
@@ -181,6 +196,40 @@ str processIfStatement(AExpr guard, list[AQuestion] ifQuestions, RefGraph variab
   }
   
   for (AQuestion q <- ifQuestions) {
+    code += question2js(q, variables);
+  }
+  
+  return code;
+}
+
+str processIfElseStatement(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions, RefGraph variables) {
+  str code = "";
+  
+  visit(guard) {
+    case ref(AId id): 
+      code += "function check" + id.name + "() {
+              '    var " + id.name + " = document.getElementById(\"" + id.name + "\");
+              '    var if" + id.name + " = document.getElementById(\"if" + id.name + "\");
+              '
+              '    if (" + id.name + ".checked == true) {
+              '         if" + id.name + ".style.display = \"block\";
+              '         else" + id.name + ".style.display = \"none\";
+              '    }
+              '    else {
+              '         if" + id.name + ".style.display = \"none\"; 
+              '         else" + id.name + ".style.display = \"block\";
+              '    }
+              '}
+              '
+              '"
+              ;
+  }
+  
+  for (AQuestion q <- ifQuestions) {
+    code += question2js(q, variables);
+  }
+  
+  for (AQuestion q <- elseQuestions) {
     code += question2js(q, variables);
   }
   
