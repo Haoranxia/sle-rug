@@ -11,7 +11,7 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 	switch(q){
 		case question(str queryText, AId id, AType varType): {
 			html = 
-				p(<queryText>,
+				p(queryText,
 				  getCorrectInputType(id, varType)
 				);
 			return html;
@@ -19,7 +19,7 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 		
 		
 		case question(str queryText, AId id, AType varType, AExpr expr): {
-			html = p(<queryText>, html5attr("id", id.name));
+			html = p(queryText, html5attr("id", id.name));
 			return html;
 		}
 		

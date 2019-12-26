@@ -33,10 +33,10 @@ void compile(AForm f) {
 HTML5Node form2html(AForm f, RefGraph ref){
 	HTML5Node html = 
   		html(head(
-  				script(src(<f.name.name + ".js">))
+  				script(src(f.name.name + ".js"))
   			),
   			 body(
-  				h1(id("title"), <f.name.name>),
+  				h1(id("title"), f.name.name),
   				div([question2html(q, ref) | AQuestion q <- f.questions])
   			 )
   		);
