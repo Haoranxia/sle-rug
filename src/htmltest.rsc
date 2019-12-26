@@ -7,10 +7,7 @@ import List;
 
 
 str testhtml(){
-	list[int] testlist = [1,2,3,4,5];
-
-	HTML5Node html = div(id("1"), div(id("2"), div(id("2"))));	
-
+	HTML5Node html = div(id("id1"), html5attr("style", "style1"));
 	return toString(html);
 }
 
