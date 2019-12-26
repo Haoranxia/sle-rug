@@ -19,7 +19,7 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 		
 		
 		case question(str queryText, AId id, AType varType, AExpr expr): {
-			html = p(<queryText>, getComputedQuestion(id, varType, expr, ref));
+			html = p(<queryText>, html5attr("id", id.name));
 			return html;
 		}
 		

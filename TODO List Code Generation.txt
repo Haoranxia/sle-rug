@@ -8,3 +8,8 @@ TO-DO list for code generation:
 	*) The questions are put in place in advance, so there is no need to reconstruct the questions: they are already there, just hidden from view.
 
 - Computed Question Generation: This works the same as the normal question generation, except for one part: we need to generate the computation, and create event listeners for the function that computes this computed value, and that listens to the variables defined in the expression for the computed question. In Rascal, we will need to scan the expression in order to get the used variables (this seems like an application of refgraph() function, since they list the defining occurrence associated with use occurrences, and using that, we should be able to get the variables in use quite easily). Then, we add a JavaScript line that adds an eventListener listening to those variables, and that activates the correct function for the current expression. Additionally, we need to translate the expression as given into an expression line that can be interpreted by JavaScript. Special care needs to be taken so that the balance of the expression is not disturbed (i.e., we need to put brackets around subexpressions).
+
+HTML TO-DO:
+
+- Get a well formatted ID for computedQuestions
+- HTML part for computed question. We need to display 1 value that depends on the variables used in the computed question.  
