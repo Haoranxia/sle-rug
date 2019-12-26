@@ -21,14 +21,99 @@ import util::Math;
 
 
 void compile(AForm f) {
-  loc saveLocJS = |project://QL/src| + (f.name.name + ".js");
-  writeFile(saveLocJS, form2js(f));
+  //loc saveLocJS = |project://QL/src| + (f.name.name + ".js");
+  //writeFile(saveLocJS, form2js(f));
   loc saveLocHTML = |project://QL/src| + (f.name.name + ".html");
   writeFile(saveLocHTML, toString(form2html(f)));
 }
 
-HTML5Node form2html(AForm f) {
+HTML5Node form2html(AForm f){
+	HTML5Node html = 
+  		html(head(
+  				script(src(<f.name.name>))
+  			),
+  			 body(
+  				h1(id("title"), <f.name.name>),
+  				[question2html(q) | AQuestion q <- f.questions]
+  			 )
+  		);
+  
   return html();
+}
+
+HTML5Node question2html(AQuestion q){
+	HTML5Node html;
+	switch(q){
+		case question(str queryText, AId, id, AType varType): {
+			html = 
+				p(<queryText>,
+				  getCorrectInputType(id, varType)
+				);
+			return html;
+		}
+		
+		
+		case question(str queryText, AId id, AType varType, AExpr expr): {
+			html = p(<queryText>, p("placeholder for expressions"));
+			return html;
+		}
+		
+		case question(AExpr guard, list[AQuestion] ifQuestions): {
+			html = 
+				div(id("if" + "placeholder"), 
+					style("display:none",
+						[question2html(ifq) | AQuestion ifq <- ifQuestions]
+					)		
+				);
+			return html;
+		}
+		
+		case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
+			html = 
+				div(id("ifelse" + "placeholder"),
+					question2html(guard, ifQuestions),				
+					div(id("else" + "placeholder"),
+						style("display:none"),
+						[question2html(elseq) | AQuestion elseq <- elseQuestions]
+					)
+				);
+			return html;
+		}
+		
+		default: {
+			println(q);
+			assert(false);
+		}
+
+	}
+	return html;
+}
+
+HTML5Node getCorrectInputType(AId id, AType t){
+	HTML5Node inputfield;
+	switch(t){
+		case stringType(): {
+			inputfield = input(\type("text"), id(<id.name>));
+			return inputfield;
+		}
+		
+		case integerType(): {
+			inputfield = input(\type("number"), id(<id.name>));
+			return inputfield;
+		}
+		
+		case booleanType(): {
+			inputfield = input(\type("checkbox"), id(<id.name>));
+			return inputfield;
+		}
+		
+		default: {
+			println(t);
+			return inputfield;
+		}
+	}
+	
+	return inputfield;
 }
 
 str form2js(AForm f) {
