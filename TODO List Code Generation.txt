@@ -11,5 +11,4 @@ TO-DO list for code generation:
 
 HTML TO-DO:
 
-- Get a well formatted ID for computedQuestions
-- HTML part for computed question. We need to display 1 value that depends on the variables used in the computed question.  
+- Take a look at binary.myql
