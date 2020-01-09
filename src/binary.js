@@ -78,13 +78,15 @@ function checkx_1_2() {
 function updateanswer_1_2() {
     var answer_1_2 = document.getElementById("answer_1_2");
     
-    answer_1_2.innerHTML = (1);
+    answer_1_2.value = (1);
+    answer_1_2.innerHTML = answer_1_2.value;
 }
 
 function updateanswer_2_3() {
     var answer_2_3 = document.getElementById("answer_2_3");
     
-    answer_2_3.innerHTML = (2);
+    answer_2_3.value = (2);
+    answer_2_3.innerHTML = answer_2_3.value;
 }
 
 function checkx_3_4() {
@@ -104,13 +106,15 @@ function checkx_3_4() {
 function updateanswer_3_4() {
     var answer_3_4 = document.getElementById("answer_3_4");
     
-    answer_3_4.innerHTML = (3);
+    answer_3_4.value = (3);
+    answer_3_4.innerHTML = answer_3_4.value;
 }
 
 function updateanswer_4_5() {
     var answer_4_5 = document.getElementById("answer_4_5");
     
-    answer_4_5.innerHTML = (4);
+    answer_4_5.value = (4);
+    answer_4_5.innerHTML = answer_4_5.value;
 }
 
 function checkx_5_7() {
@@ -144,13 +148,15 @@ function checkx_5_6() {
 function updateanswer_5_6() {
     var answer_5_6 = document.getElementById("answer_5_6");
     
-    answer_5_6.innerHTML = (5);
+    answer_5_6.value = (5);
+    answer_5_6.innerHTML = answer_5_6.value;
 }
 
 function updateanswer_6_7() {
     var answer_6_7 = document.getElementById("answer_6_7");
     
-    answer_6_7.innerHTML = (6);
+    answer_6_7.value = (6);
+    answer_6_7.innerHTML = answer_6_7.value;
 }
 
 function checkx_7_8() {
@@ -170,7 +176,8 @@ function checkx_7_8() {
 function updateanswer_7_8() {
     var answer_7_8 = document.getElementById("answer_7_8");
     
-    answer_7_8.innerHTML = (7);
+    answer_7_8.value = (7);
+    answer_7_8.innerHTML = answer_7_8.value;
 }
 
 function checkx_8_9() {
@@ -190,13 +197,15 @@ function checkx_8_9() {
 function updateanswer_8_9() {
     var answer_8_9 = document.getElementById("answer_8_9");
     
-    answer_8_9.innerHTML = (8);
+    answer_8_9.value = (8);
+    answer_8_9.innerHTML = answer_8_9.value;
 }
 
 function updateanswer_9_10() {
     var answer_9_10 = document.getElementById("answer_9_10");
     
-    answer_9_10.innerHTML = (9);
+    answer_9_10.value = (9);
+    answer_9_10.innerHTML = answer_9_10.value;
 }
 
 function checkx_10_15() {
@@ -244,13 +253,15 @@ function checkx_10_11() {
 function updateanswer_10_11() {
     var answer_10_11 = document.getElementById("answer_10_11");
     
-    answer_10_11.innerHTML = (10);
+    answer_10_11.value = (10);
+    answer_10_11.innerHTML = answer_10_11.value;
 }
 
 function updateanswer_11_12() {
     var answer_11_12 = document.getElementById("answer_11_12");
     
-    answer_11_12.innerHTML = (11);
+    answer_11_12.value = (11);
+    answer_11_12.innerHTML = answer_11_12.value;
 }
 
 function checkx_12_13() {
@@ -270,7 +281,8 @@ function checkx_12_13() {
 function updateanswer_12_13() {
     var answer_12_13 = document.getElementById("answer_12_13");
     
-    answer_12_13.innerHTML = (12);
+    answer_12_13.value = (12);
+    answer_12_13.innerHTML = answer_12_13.value;
 }
 
 function checkx_13_14() {
@@ -290,13 +302,15 @@ function checkx_13_14() {
 function updateanswer_13_14() {
     var answer_13_14 = document.getElementById("answer_13_14");
     
-    answer_13_14.innerHTML = (13);
+    answer_13_14.value = (13);
+    answer_13_14.innerHTML = answer_13_14.value;
 }
 
 function updateanswer_14_15() {
     var answer_14_15 = document.getElementById("answer_14_15");
     
-    answer_14_15.innerHTML = (14);
+    answer_14_15.value = (14);
+    answer_14_15.innerHTML = answer_14_15.value;
 }
 
 function checkx_15_17() {
@@ -330,13 +344,15 @@ function checkx_15_16() {
 function updateanswer_15_16() {
     var answer_15_16 = document.getElementById("answer_15_16");
     
-    answer_15_16.innerHTML = (15);
+    answer_15_16.value = (15);
+    answer_15_16.innerHTML = answer_15_16.value;
 }
 
 function updateanswer_16_17() {
     var answer_16_17 = document.getElementById("answer_16_17");
     
-    answer_16_17.innerHTML = (16);
+    answer_16_17.value = (16);
+    answer_16_17.innerHTML = answer_16_17.value;
 }
 
 function checkx_17_18() {
@@ -356,7 +372,8 @@ function checkx_17_18() {
 function updateanswer_17_18() {
     var answer_17_18 = document.getElementById("answer_17_18");
     
-    answer_17_18.innerHTML = (17);
+    answer_17_18.value = (17);
+    answer_17_18.innerHTML = answer_17_18.value;
 }
 
 function checkx_18_19() {
@@ -376,12 +393,14 @@ function checkx_18_19() {
 function updateanswer_18_19() {
     var answer_18_19 = document.getElementById("answer_18_19");
     
-    answer_18_19.innerHTML = (18);
+    answer_18_19.value = (18);
+    answer_18_19.innerHTML = answer_18_19.value;
 }
 
 function updateanswer_19_20() {
     var answer_19_20 = document.getElementById("answer_19_20");
     
-    answer_19_20.innerHTML = (19);
+    answer_19_20.value = (19);
+    answer_19_20.innerHTML = answer_19_20.value;
 }
 
