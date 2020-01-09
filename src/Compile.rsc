@@ -54,5 +54,7 @@ str form2js(AForm f, RefGraph variables) {
     println();
     program += question2js(q, variables);
   }
+  program += "
+               '" + computeAnswer(f, variables);
   return program;
 }

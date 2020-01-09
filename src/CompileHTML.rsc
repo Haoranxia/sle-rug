@@ -34,13 +34,22 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 		
 		case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
 			html = 
-				div(div(id("if" + getCorrectId(guard, ref))),
-					div([question2html(ifq, ref) | AQuestion ifq <- ifQuestions]),		
-					div(id("else" + getCorrectId(guard, ref)),
+			    div(div(question2html(question(guard, ifQuestions), ref)),
+			        div(id("else" + getCorrectId(guard, ref)),
 						html5attr("style", "display:block"),
 						div([question2html(elseq, ref) | AQuestion elseq <- elseQuestions])
 					)
 				);
+			/*html = 
+				div(div(id("if" + getCorrectId(guard, ref))),//,
+				       // html5attr("style", "display:none")),
+					div([question2html(ifq, ref) | AQuestion ifq <- ifQuestions],
+					    html5attr("style", "display:none")),		
+					div(id("else" + getCorrectId(guard, ref)),
+						html5attr("style", "display:block"),
+						div([question2html(elseq, ref) | AQuestion elseq <- elseQuestions])
+					)
+				);*/
 			return html;
 		}
 
