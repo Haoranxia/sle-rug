@@ -9,6 +9,10 @@ import util::Math;
 str addEventListeners(AForm f, RefGraph variables) {
   str code = "window.onload = function() {";
   
+  code += "
+          '    updateanswer();
+          '";
+  
   for (AQuestion q <- f.questions) {
     code += addQuestionEventListener(q, variables);
   }
@@ -24,12 +28,21 @@ str addQuestionEventListener(AQuestion q, RefGraph variables) {
   str code = "";
   
   switch(q) {
+      /*case question(str queryText, AId id, AType varType): {
+        code += "
+                '    document.getElementById(\"" + id.name + "\"). addEventListener(\"change\", update" + id.name + ");";
+      }*/
       case question(str queryText, AId id, AType varType, AExpr expr): {
         println("Started a computed question eventlistener analysis.");
+
         list[str] names = [];
         visit(expr) {
-          case ref(AId id): names += id.name;
+          case ref(AId id): {
+            println("Found a ref id for the updateanswer lines!");
+            names += id.name;
+          }
         }
+        println("names: " + names);
         for (str name <- names) {
           code += "
                   '    document.getElementById(\"" + name + "\").addEventListener(\"change\", update" + id.name + ");";
@@ -37,9 +50,13 @@ str addQuestionEventListener(AQuestion q, RefGraph variables) {
       }
       case question(AExpr guard, list[AQuestion] ifQuestions): {
         visit(guard) {
-          case ref(AId id): 
+          case ref(AId id): {
             code += "
                     '    document.getElementById(\"" + id.name + "\").addEventListener(\"change\", check" + id.name + ");";
+            /*code += "
+                    '    document.getElementById(\"" + id.name + "\").addEventListener(\"change\", updateanswer);";
+            */
+          }
         }
         for (AQuestion ifq <- ifQuestions) {
           code += addQuestionEventListener(ifq, variables);
@@ -47,9 +64,12 @@ str addQuestionEventListener(AQuestion q, RefGraph variables) {
       }
       case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
         visit(guard) {
-          case ref(AId id): 
+          case ref(AId id): {
             code += "
                     '    document.getElementById(\"" + id.name + "\").addEventListener(\"change\", check" + id.name + ");";
+            code += "
+                    '    document.getElementById(\"" + id.name + "\").addEventListener(\"change\", updateanswer);";
+          }
         }
         for (AQuestion ifq <- ifQuestions) {
           code += addQuestionEventListener(ifq, variables);
@@ -67,7 +87,7 @@ str question2js(AQuestion q, RefGraph variables) {
   str questionCode = "";
   
   switch(q) {
-    case question(str queryText, AId id, AType varType, AExpr expr): 
+    case question(str queryText, AId id, AType varType, AExpr expr):
       questionCode += processComputedQuestion(id, expr, variables);
     case question(AExpr guard, list[AQuestion] ifQuestions): 
       questionCode += processIfStatement(guard, ifQuestions, variables);
@@ -76,6 +96,42 @@ str question2js(AQuestion q, RefGraph variables) {
   }
   
   return questionCode;
+}
+
+str computeAnswer(AForm f, RefGraph vars) {
+  str code = "";
+  
+  // Create function signature
+  code += "function updateanswer() {
+          '";
+          
+  code += "    var displayValue = -1;
+          '
+          '";
+    
+  // Add all variables in the function definition
+  for (<loc use, str name> <- vars.uses) {
+    code += "    var " + name + " = document.getElementById(\"" + name + "\");
+            '";
+  }
+  
+  for (/question(str queryText, AId id, AType varType, AExpr expr) := f) {
+    code += "    update" + id.name + "();
+            '";
+  }
+    
+  // Call the evaluation of the if statements
+  //code += "    displayValue = evaluateIfStatements();
+  //        '";
+          
+  // Set the displayValue into the answer line
+  //code += "    document.getElementById(\"" + 
+  
+  // Closing bracket
+  code += "}
+          '";
+  
+  return code;
 }
 
 str processComputedQuestion(AId id, AExpr expr, RefGraph variables) {
@@ -99,7 +155,7 @@ str processComputedQuestion(AId id, AExpr expr, RefGraph variables) {
           '    var <name> = document.getElementById(\"<name>\");
           '    <}>
           '    " + id.name + ".value = " + expr2js(expr) + ";
-          '    " + id.name + ".innerHTML = " + id.name + ".value;
+          '    " + id.name + ".innerHTML += \":\" + " + id.name + ".value;
           '}
           '
           '";
