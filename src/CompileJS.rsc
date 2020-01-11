@@ -119,13 +119,6 @@ str computeAnswer(AForm f, RefGraph vars) {
     code += "    update" + id.name + "();
             '";
   }
-    
-  // Call the evaluation of the if statements
-  //code += "    displayValue = evaluateIfStatements();
-  //        '";
-          
-  // Set the displayValue into the answer line
-  //code += "    document.getElementById(\"" + 
   
   // Closing bracket
   code += "}

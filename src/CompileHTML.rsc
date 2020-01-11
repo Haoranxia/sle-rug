@@ -5,6 +5,7 @@ import Resolve;
 import IO;
 import lang::html5::DOM; // see standard library
 import util::Math;
+import Boolean;
 
 HTML5Node question2html(AQuestion q, RefGraph ref){
 	HTML5Node html;
@@ -12,14 +13,16 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 		case question(str queryText, AId id, AType varType): {
 			html = 
 				p(queryText,
-				  getCorrectInputType(id, varType)
+				  getCorrectInputType(id, varType, true)
 				);
 			return html;
 		}
 		
 		
 		case question(str queryText, AId id, AType varType, AExpr expr): {
-			html = p(queryText, html5attr("id", id.name));
+			html = p(queryText, 
+			         getCorrectInputType(id, varType, false)
+			       );
 			return html;
 		}
 		
@@ -47,23 +50,38 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 	return html;
 }
 
-HTML5Node getCorrectInputType(AId aid, AType t){
+HTML5Node getCorrectInputType(AId aid, AType t, bool mutable){
 	HTML5Node inputfield;
 	//println(aid);
 	//println(t);
 	switch(t){
 		case stringType(): {
-			inputfield = input(\type("text"), id(aid.name));
+		    if (mutable) {
+			    inputfield = input(\type("text"), id(aid.name));
+			}
+			else {
+			    inputfield = input(\type("text"), id(aid.name), readonly("readonly"));
+			}
 			return inputfield;
 		}
 		
 		case integerType(): {
-			inputfield = input(\type("number"), id(aid.name));
+			if (mutable) {
+			    inputfield = input(\type("number"), id(aid.name));
+			}
+			else {
+			    inputfield = input(\type("number"), id(aid.name), readonly("readonly"));
+			}
 			return inputfield;
 		}
 		
 		case booleanType(): {
-			inputfield = input(\type("checkbox"), id(aid.name));
+			if (mutable) {
+			    inputfield = input(\type("checkbox"), id(aid.name));
+			}
+			else {
+			    inputfield = input(\type("checkbox"), id(aid.name), readonly("readonly"));
+			}
 			return inputfield;
 		}
 		
