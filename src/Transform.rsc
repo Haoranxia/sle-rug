@@ -1,6 +1,8 @@
 module Transform
 
 import IO;
+import Set;
+import ParseTree;
 
 import Syntax;
 import Resolve;
@@ -32,24 +34,9 @@ import AST;
  
 AForm flatten(AForm f) {
   list[AQuestion] newQuestions = [];
-  //AForm newForm = form(f.name, newQuestions);
   
   for (AQuestion q <- f.questions) {
       newQuestions += flattenQuestion(q, []);
-      /*println(q);
-      switch(q) {
-          case question(str queryText, AId id, AType varType): {
-              println("matched case 1");
-              newQuestions += [question(boolean(true), [q])];
-          }
-          case question(str queryText, AId id, AType varType, AExpr expr): {
-              println("matched case 2");
-              newQuestions += [question(boolean(true), [q])];
-          }
-          case question(AExpr guard, list[AQuestion] ifquestions): {
-              println("matched case 3");
-          }
-      }*/
   }
   
   return form(f.name, newQuestions); 
@@ -59,19 +46,14 @@ AForm flatten(AForm f) {
 list[AQuestion] flattenQuestion(AQuestion q, list[AExpr] conditions) {
     list[AQuestion] flattenedQuestions = [];
     switch(q) {
-        case question(str queryText, AId id, AType varType): {
-            println("matched case 1");
+        case question(str queryText, AId id, AType varType):
             flattenedQuestions += [question(concatConditions(conditions), [q])];
-        }
-        case question(str queryText, AId id, AType varType, AExpr expr): {
-            println("matched case 2");
+        case question(str queryText, AId id, AType varType, AExpr expr): 
             flattenedQuestions += [question(concatConditions(conditions), [q])];
-        }
         case question(AExpr guard, list[AQuestion] ifQuestions): {
             for (AQuestion qif <- ifQuestions) {
                 flattenedQuestions += flattenQuestion(qif, conditions + [guard]);
             }
-            println("matched case 3");
         }
         case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
             for (AQuestion qif <- ifQuestions) {
@@ -80,7 +62,6 @@ list[AQuestion] flattenQuestion(AQuestion q, list[AExpr] conditions) {
             for (AQuestion qelse <- elseQuestions) { // Else case adds the negation of the guard as a condition
                 flattenedQuestions += flattenQuestion(qelse, conditions + [not(guard)]);
             }
-            println("matched case 4");
         }
     }
     
@@ -105,8 +86,38 @@ AExpr concatConditions(list[AExpr] conditions) {
  *
  */
  
- start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
-   return f; 
+ start[Form] rename(start[Form] f, loc useOrDef, str newName, RefGraph refs) {
+     // Get the defining occurrence associated with the indicated location
+     println("Starting rename.");
+     loc defLoc = useOrDef;
+     println({def | <loc use, loc def> <- refs.useDef, use == useOrDef});
+     if ({def | <str name, loc def> <- refs.defs, def == useOrDef} != {}) { // Case def: the rename location is a defining occurrence
+         defLoc = useOrDef;
+     }
+     else { // Case use: search for defining occurrence associated with the use occurrence
+         defLoc = getOneFrom({def | <loc use, loc def> <- refs.useDef, use == useOrDef});
+     }
+     
+     Id newId = [Id]newName;
+     
+     return visit(f) {
+         case (Question) `<Str query> <Id x> : <Type varType>`
+           => (Question) `<Str query> <Id newId> : <Type varType>`
+           when
+               defLoc == x@\loc
+         
+         case (Question) `<Str query> <Id x> : <Type varType> = <Expr exp>`
+           => (Question) `<Str query> <Id newId> : <Type varType> = <Expr exp>`
+           when
+               defLoc == x@\loc
+         
+         case (Expr) `<Id x>`
+           => (Expr) `<Id newId>`
+           when 
+                <loc use, loc def> <- refs.useDef,
+                use == x@\loc,
+                def == defLoc
+     } 
  } 
  
  
