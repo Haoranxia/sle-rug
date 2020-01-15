@@ -118,7 +118,35 @@ AExpr concatConditions(list[AExpr] conditions) {
                 use == x@\loc,
                 def == defLoc
      } 
- } 
+}
+
+// This rename accepts a string as input as opposed to a location
+start[Form] rename2(start[Form] f, str oldName, str newName, RefGraph refs){
+ 	Id newId = [Id]newName;
+ 	
+ 	return visit(f){
+ 		case (Question) `<Str query> <Id x> : <Type varType>`
+ 		  => (Question) `<Str query> <Id newId> : <Type varType>`
+ 		  when
+ 		  	<oldName, loc def> <- refs.defs,
+ 		  	def == x@\loc
+ 		  	
+ 		case (Question) `<Str query> <Id x> : <Type varType> = <Expr exp>`
+          => (Question) `<Str query> <Id newId> : <Type varType> = <Expr exp>`
+          when
+            <oldName, loc def> <- refs.defs,
+            def == x@\loc
+         
+        case (Expr) `<Id x>`
+          => (Expr) `<Id newId>`
+          when 
+            <loc use, loc def> <- refs.useDef,
+            use == x@\loc,
+            <use, defLoc> <- refs.useDef,
+            def == defLoc
+ 	}
+} 
+ 
  
  
  

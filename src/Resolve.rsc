@@ -23,7 +23,7 @@ alias RefGraph = tuple[
   UseDef useDef
 ]; 
 
-RefGraph resolve(AForm f) = <us, ds, us o ds>
+RefGraph resolve(AForm  f) = <us, ds, us o ds>
   when Use us := uses(f), Def ds := defs(f);
 
 Use uses(AForm f) {
