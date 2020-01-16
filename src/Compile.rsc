@@ -47,11 +47,7 @@ HTML5Node form2html(AForm f, RefGraph ref){
 str form2js(AForm f, RefGraph variables) {
   str program = "";
   program += addEventListeners(f, variables);
-  //println(variables);
   for (AQuestion q <- f.questions) {
-    print("Analysing the following question: ");
-    println(q);
-    println();
     program += question2js(q, variables);
   }
   program += "

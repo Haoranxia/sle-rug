@@ -10,6 +10,7 @@ import Compile;
 import util::IDE;
 import Message;
 import ParseTree;
+import IO;
 
 
 private str MyQL ="MyQL";
@@ -17,6 +18,7 @@ private str MyQL ="MyQL";
 anno rel[loc, loc] Tree@hyperlinks;
 
 void main() {
+  println("Started IDE");
   registerLanguage(MyQL, "myql", Tree(str src, loc l) {
     return parse(#start[Form], src, l);
   });
@@ -25,7 +27,7 @@ void main() {
     annotator(Tree(Tree t) {
       if (start[Form] pt := t) {
         AForm ast = cst2ast(pt);
-        UseDef useDef = resolve(ast);
+        UseDef useDef = resolve(ast).useDef;
         set[Message] msgs = check(ast, collect(ast), useDef);
         return t[@messages=msgs][@hyperlinks=useDef];
       }
@@ -35,7 +37,7 @@ void main() {
     builder(set[Message] (Tree t) {
       if (start[Form] pt := t) {
         AForm ast = cst2ast(pt);
-        UseDef useDef = resolve(ast);
+        UseDef useDef = resolve(ast).useDef;
         set[Message] msgs = check(ast, collect(ast), useDef);
         if (msgs == {}) {
           compile(ast);

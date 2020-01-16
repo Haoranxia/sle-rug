@@ -55,7 +55,7 @@ set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
       msgs += createDupLabelWarnings(queryText, id, tenv, useDef);
       msgs += createMultipleLabelsWarnings(id, tenv, useDef);
       msgs += check(expr, tenv, useDef);
-      if (typeOf(expr, tenv, useDef) != varType) { // Test whether the assigned expression is of the correct type
+      if (typeOf(expr, tenv, useDef) != mapDefTypes(varType)) { // Test whether the assigned expression is of the correct type
         msgs += { error("Type of expression does not match type of variable.", expr.src) };
       }
     }
@@ -237,9 +237,23 @@ set[Message] check(AExpr e, TEnv tenv, UseDef useDef) {
 Type typeOf(AExpr e, TEnv tenv, UseDef useDef) {
   switch (e) {
   // Base Cases
-    case ref(str x, src = loc u): { 
-      if (<u, loc d> <- useDef, <d, x, _, Type t> <- tenv) {
-        return t;
+    case ref(AId x, src = loc u): { 
+      loc d = |tmp:///|;
+      for (<loc use, loc def> <- useDef) { // Find definition
+        if (use == x.src) {
+          d = def;
+          break;
+        }
+      }
+      
+      if (d == |tmp:///|) { // variable not defined
+        return tunknown();
+      }
+      
+      for (<loc def, _, _, Type t> <- tenv) { // Determine type
+        if (def == d) {
+          return t;
+        }
       }
     }
     case integer(int intValue): return tint();
@@ -327,6 +341,15 @@ Type typeOf(AExpr e, TEnv tenv, UseDef useDef) {
     }
   }
   return tunknown(); 
+}
+
+Type mapDefTypes(AType varType) {
+  switch (varType) {
+    case integerType(): return tint();
+    case booleanType(): return tbool();
+    case stringType(): return tstr();
+    default: return tunknown();
+  }
 }
 
 /* 
