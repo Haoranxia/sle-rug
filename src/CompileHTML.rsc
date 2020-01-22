@@ -52,8 +52,6 @@ HTML5Node question2html(AQuestion q, RefGraph ref){
 
 HTML5Node getCorrectInputType(AId aid, AType t, bool mutable){
 	HTML5Node inputfield;
-	//println(aid);
-	//println(t);
 	switch(t){
 		case stringType(): {
 		    if (mutable) {
@@ -86,7 +84,6 @@ HTML5Node getCorrectInputType(AId aid, AType t, bool mutable){
 		}
 		
 		default: {
-			println(t);
 			return inputfield;
 		}
 	}

@@ -33,7 +33,6 @@ data Input
 VEnv initialEnv(AForm f) {
   VEnv valEnv = ();
   for (/question(str label, AId x, AType varType) := f) {
-    println(x.name);
     switch(varType) {
       case integerType(): valEnv += (x.name: vint(0));
       case booleanType(): valEnv += (x.name: vbool(false));
@@ -77,17 +76,14 @@ VEnv eval(AQuestion q, Input inp, VEnv venv) {
   // evaluate inp and computed questions to return updated VEnv
   switch(q) {
     case question(str queryText, AId id, AType varType): {
-      //println("Testing case 1");
       if (id.name == inp.question) {
         venv[id.name] = inp.\value;
       }
     }
     case question(str queryText, AId id, AType varType, AExpr expr): {
-     // println("Testing case 2");
       venv[id.name] = eval(expr, venv);
     }
     case question(AExpr guard, list[AQuestion] ifQuestions): {
-    //println("Testing case 3");
       if (eval(guard, venv) == vbool(true)) {
         for (ifq <- ifQuestions) {
           venv = eval(ifq, inp, venv);
@@ -96,10 +92,6 @@ VEnv eval(AQuestion q, Input inp, VEnv venv) {
     }
     
     case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
-      //println("Testing case 4");
-      print("guard: ");
-      println(guard);
-      println(eval(guard, venv) == vbool(true));
       if (eval(guard, venv) == vbool(true)) {
         for (ifq <- ifQuestions) {
           venv = eval(ifq, inp, venv);
@@ -170,7 +162,6 @@ Value eval(AExpr e, VEnv venv) {
       return vint(l+r);
     }
     case minus(AExpr left, AExpr right): {
-      println(venv);
       int l, r;
       switch(eval(left, venv)) {
         case vint(int x): l = x;

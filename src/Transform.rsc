@@ -3,6 +3,7 @@ module Transform
 import IO;
 import Set;
 import ParseTree;
+import String;
 
 import Syntax;
 import Resolve;
@@ -21,7 +22,7 @@ import AST;
  *          q1: "" int; 
  *        } 
  *        q2: "" int; 
- *      }
+ *      rename}
  *
  *  is equivalent to
  *     if (true) q0: "" int;
@@ -48,13 +49,16 @@ list[AQuestion] flattenQuestion(AQuestion q, list[AExpr] conditions) {
     switch(q) {
         case question(str queryText, AId id, AType varType):
             flattenedQuestions += [question(concatConditions(conditions), [q])];
+        
         case question(str queryText, AId id, AType varType, AExpr expr): 
             flattenedQuestions += [question(concatConditions(conditions), [q])];
+        
         case question(AExpr guard, list[AQuestion] ifQuestions): {
             for (AQuestion qif <- ifQuestions) {
                 flattenedQuestions += flattenQuestion(qif, conditions + [guard]);
             }
         }
+        
         case question(AExpr guard, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions): {
             for (AQuestion qif <- ifQuestions) {
                 flattenedQuestions += flattenQuestion(qif, conditions + [guard]);
@@ -111,7 +115,7 @@ AExpr concatConditions(list[AExpr] conditions) {
            when
                defLoc == x@\loc
          
-         case (Expr) `<Id x>`
+         case (Expr) `<Id x>` // Replace occurrences within expressions
            => (Expr) `<Id newId>`
            when 
                 <loc use, loc def> <- refs.useDef,
